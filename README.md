@@ -8,6 +8,7 @@ A simple tcp server/client go framework.
 * Server支持主动关闭
 * Client支持Send+Write\OnlySend模式
 * 提供默认的Message协议，自包含版本、命令、数据，应用可直接使用
+* 支持自定义HeadFlag设定，用于验证消息头
 
 ## Code:
 #### server code:
