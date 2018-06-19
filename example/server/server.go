@@ -16,8 +16,8 @@ func init(){
 	gob.Register(LoginInfo{})
 }
 
-
 func main(){
+
 	server, err := connx.NewServer("127.0.0.1:7069", onConnHandler)
 	if err != nil{
 		fmt.Println("GetNewServer error", err)
@@ -31,5 +31,8 @@ func main(){
 func onConnHandler(conn *connx.Connection) error{
 	msg, err := conn.ParseMessage()
 	fmt.Println(msg, err)
+
+	msgReply := connx.ResponseMessage("echo ok")
+	conn.SendMessage(msgReply)
 	return nil
 }

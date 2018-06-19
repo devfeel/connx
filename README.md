@@ -26,6 +26,9 @@ func main(){
 func onConnHandler(conn *connx.Connection) error{
 	msg, err := conn.ParseMessage()
 	fmt.Println(msg, err)
+
+	msgReply := connx.ResponseMessage("echo ok")
+	conn.SendMessage(msgReply)
 	return nil
 }
 ```
