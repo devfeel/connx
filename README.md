@@ -10,7 +10,7 @@ A simple tcp server/client go framework.
 * 提供默认的Message协议，自包含版本、命令、数据，应用可直接使用
 
 ## Code:
-#### server
+#### server code:
 ```go
 func main(){
 	server, err := connx.NewServer("127.0.0.1:7069", onConnHandler)
@@ -29,7 +29,7 @@ func onConnHandler(conn *connx.Connection) error{
 	return nil
 }
 ```
-#### client
+#### client code:
 ```go
 func main(){
 	client := connx.NewClient("127.0.0.1:7069", onConnHandler)
