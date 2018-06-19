@@ -11,6 +11,11 @@ func init() {
 	HeadFlag = 0x20180618
 }
 
+// SetHeadFlag set head flag on global mode
+func SetHeadFlag(flag uint32){
+	HeadFlag = flag
+}
+
 // HeadInfo trans data head info, 20 size
 type HeadInfo struct {
 	Flag uint32 //head flag used to base check

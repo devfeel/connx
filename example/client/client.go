@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/devfeel/connx"
 	"fmt"
-	"encoding/gob"
 	"time"
+	"encoding/gob"
 )
 
 type LoginInfo struct{
@@ -13,8 +13,12 @@ type LoginInfo struct{
 	LoginFrom string
 }
 
-func main(){
+func init(){
 	gob.Register(LoginInfo{})
+	connx.SetHeadFlag(0x1000)
+}
+
+func main(){
 	client := connx.NewClient("127.0.0.1:7069", onConnHandler)
 	//client := connx.NewRequestOnlyClient("127.0.0.1:7020")
 

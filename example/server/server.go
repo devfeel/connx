@@ -14,6 +14,7 @@ type LoginInfo struct{
 
 func init(){
 	gob.Register(LoginInfo{})
+	connx.SetHeadFlag(0x1000)
 }
 
 func main(){
