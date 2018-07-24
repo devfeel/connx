@@ -4,6 +4,7 @@ import (
 	"github.com/devfeel/connx"
 	"fmt"
 	"encoding/gob"
+	"time"
 )
 
 type LoginInfo struct{
@@ -25,6 +26,13 @@ func main(){
 		return
 	}
 	fmt.Println("GetNewServer begin listen")
+	go func(){
+		for{
+			time.Sleep(time.Second * 10)
+			fmt.Println("ConnCount:", server.GetConnectionCount())
+		}
+	}()
+
 	server.Start()
 }
 

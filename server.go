@@ -44,19 +44,56 @@ func (s *Server) SetOnConnHandle(handler OnConnHandle){
 	s.handler = handler
 }
 
-// AddConnection add new connection
+// getConnection get connection with ConnIndex
+func (s *Server) getConnection(index int64) (*Connection, bool){
+	conn, isExists := s.connectMap[index]
+	return conn, isExists
+}
+
+// addConnection add new connection
 func (s *Server) addConnection(conn *Connection) {
 	s.locker.Lock()
 	defer s.locker.Unlock()
 	s.connectMap[conn.ConnIndex] = conn
+	connLogger.Debug(fmt.Sprintf("Server addConnection %v", conn.RemoteAddr()))
+
 }
 
-// RemoveConnection remove connection
+// removeConnection remove connection
 func (s *Server) removeConnection(conn *Connection) {
-	conn.Close()
 	s.locker.Lock()
 	defer s.locker.Unlock()
+	conn.Close()
 	delete(s.connectMap, conn.ConnIndex)
+	connLogger.Debug(fmt.Sprintf("Server removeConnection %v", conn.RemoteAddr()))
+}
+
+// GetConnCount get connection count on current Server
+func (s *Server) GetConnectionCount() int{
+	s.locker.RLock()
+	defer s.locker.RUnlock()
+	return len(s.connectMap)
+}
+
+// GetConnMap get connection map on current Server
+func (s *Server) GetConnectionMap() map[int64]*Connection{
+	return s.connectMap
+}
+
+// AddConnection add new connection
+func (s *Server) AddConnection(conn *Connection){
+	s.addConnection(conn)
+}
+
+// RemoveConnection remove connection with ConnIndex
+func (s *Server) RemoveConnection(connIndex int64){
+	s.locker.RLock()
+	conn, isExists := s.getConnection(connIndex)
+	s.locker.RUnlock()
+	if !isExists{
+		return
+	}
+	s.removeConnection(conn)
 }
 
 // Start start loop handler conn
@@ -64,14 +101,15 @@ func (s *Server) Start(){
 	for {
 		select {
 		case <-s.stopChan:
-			connLogger.Debug(fmt.Sprint("Server get stop signal, so stop server loop handle conn"))
+			connLogger.Info(fmt.Sprint("Server get stop signal, so stop server loop handle conn"))
 			break
 		default:
 			conn, err := s.listener.Accept()
 			if err != nil{
 				connLogger.Error(fmt.Sprint("Server accept listener error ", err))
 			}else{
-				s.handleConn(NewConnction(conn))
+				connLogger.Debug(fmt.Sprintf("Server received new connection from %v", conn.RemoteAddr()))
+				go s.handleConn(NewConnction(conn))
 			}
 		}
 	}
@@ -103,6 +141,7 @@ func NewServer(tcpPort string, handler OnConnHandle) (*Server, error) {
 		return s, err
 	}
 	s.listener, err = net.ListenTCP("tcp", tcpAddr)
+	connLogger.Debug(fmt.Sprintf("NewServer %v", tcpAddr))
 	return s, err
 }
 

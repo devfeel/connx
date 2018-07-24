@@ -21,7 +21,7 @@ const (
 const (
 	defaultTimeLayout = "2006_01_02"
 	defaultDateFormatForFileName = "2006_01_02"
-	defaultFullTimeLayout        = "2006-01-02 15:04:05.9999"
+	defaultFullTimeLayout        = "2006-01-02 15:04:05.999"
 
 )
 
